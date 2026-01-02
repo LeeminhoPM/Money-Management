@@ -1,0 +1,29 @@
+# Config database và jpa
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/money_management
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+  mail:
+    host: smtp-relay.brevo.com
+    port: 587
+    username: 9f25fe001@smtp-brevo.com
+    password: xsmtpsib-10a086d4737d2b73f93cd765780b1a9a16b0989f3522fb3e864d1ddbdce593c4-H4MOeJHy4E88wA0e
+    properties:
+      mail:
+        smtp:
+          from: "l.x.k8042@gmail.com"
+          auth: true
+          starttls:
+            enable: true
+    protocol: smtp
+
+server:
+  servlet:
+    context-path: /api/v1.0
