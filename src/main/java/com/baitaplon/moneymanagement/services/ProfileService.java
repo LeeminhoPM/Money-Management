@@ -1,13 +1,22 @@
 package com.baitaplon.moneymanagement.services;
 
+import com.baitaplon.moneymanagement.dto.AuthDTO;
 import com.baitaplon.moneymanagement.dto.ProfileDTO;
 import com.baitaplon.moneymanagement.entities.ProfileEntity;
 import com.baitaplon.moneymanagement.repositories.ProfileRepository;
+import com.baitaplon.moneymanagement.utils.JWTUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -15,11 +24,14 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProfileService {
     ProfileRepository profileRepository;
-    private final EmailService emailService;
+    EmailService emailService;
+    PasswordEncoder passwordEncoder;
+    AuthenticationManager authenticationManager;
 
     public ProfileDTO registerProfile(ProfileDTO profileDTO) {
         ProfileEntity newProfile = toEntity(profileDTO);
         newProfile.setActivationToken(UUID.randomUUID().toString());
+        newProfile.setPassword(passwordEncoder.encode(newProfile.getPassword()));
         newProfile = profileRepository.save(newProfile);
 
 //        Gửi email kích hoạt
@@ -63,5 +75,55 @@ public class ProfileService {
                     return true;
                 }
         ).orElse(false);
+    }
+
+    public boolean isAccountActive(String email) {
+        return profileRepository
+                .findByEmail(email)
+                .map(ProfileEntity::getIsActive)
+                .orElse(false);
+    }
+
+//    Hàm lấy thông tin người đang đăng nhập
+    public ProfileEntity getCurrentProfile() {
+//        Thông tin người dùng đang đăng nhập được lưu trong SecurityContextHolder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        assert authentication != null;
+//        Ở đây getName vì mặc định sẽ dùng email làm username
+        return profileRepository.findByEmail(authentication.getName()).orElseThrow(
+                () -> new UsernameNotFoundException("Không tìm thấy người dùng")
+        );
+    }
+
+    public ProfileDTO getPublicProfile(String email) {
+        ProfileEntity currentUser;
+//        Nếu không có email th truyền vào user đang đăng nhập
+//        Nếu có thì tìm người đó và đưa ra
+        if (email == null) {
+            currentUser = getCurrentProfile();
+        } else {
+            currentUser = profileRepository.findByEmail(email)
+                    .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng"));
+        }
+
+        return ProfileDTO.builder()
+                .id(currentUser.getId())
+                .fullName(currentUser.getFullName())
+                .email(currentUser.getEmail())
+                .profileImageUrl(currentUser.getProfileImageUrl())
+                .createdAt(currentUser.getCreatedAt())
+                .updatedAt(currentUser.getUpdatedAt())
+                .build();
+    }
+
+    public Map<String, Object> authenticateAndGenerateToken(AuthDTO authDTO) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authDTO.getEmail(), authDTO.getPassword()));
+//            Sinh token
+            JWTUtil jwtUtil = new JWTUtil();
+            return Map.of("token", jwtUtil.generateToken(authDTO.getEmail()), "user", getPublicProfile(authDTO.getEmail()));
+        } catch (Exception e) {
+            throw new RuntimeException("Mật khẩu hoặc email sai");
+        }
     }
 }
