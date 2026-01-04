@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -51,6 +52,18 @@ public class IncomeService {
             throw new RuntimeException("Bạn không có quyền xóa mục này");
         }
         incomeRepository.delete(income);
+    }
+
+    public List<IncomeDTO> getLastest5IncomesForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<IncomeEntity> incomes = incomeRepository.findTop5ByProfileIdOrderByDateDesc(profile.getId());
+        return incomes.stream().map(this::toDTO).toList();
+    }
+
+    public BigDecimal getTotalIncomesForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        BigDecimal totalIncomes = incomeRepository.findTotalIncomeByProfileId(profile.getId());
+        return totalIncomes != null ? totalIncomes : BigDecimal.ZERO;
     }
 
     //    Helper method
