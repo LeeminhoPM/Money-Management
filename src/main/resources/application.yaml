@@ -23,6 +23,8 @@ spring:
           starttls:
             enable: true
     protocol: smtp
+  profiles:
+    active: prod
 
 server:
   servlet:
@@ -30,4 +32,8 @@ server:
 
 money-management:
   frontend:
-    url: "http://localhost:5173"
+    url: ${MONEY_MANAGER_FRONTEND_URL}
+
+app:
+  activation:
+    url: ${MONEY_MANAGER_BACKEND_URL}

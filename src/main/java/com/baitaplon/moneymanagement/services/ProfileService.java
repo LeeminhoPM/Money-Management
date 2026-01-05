@@ -8,6 +8,8 @@ import com.baitaplon.moneymanagement.utils.JWTUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,6 +30,10 @@ public class ProfileService {
     PasswordEncoder passwordEncoder;
     AuthenticationManager authenticationManager;
 
+    @NonFinal
+    @Value("${app.activation.url}")
+    String activationUrl;
+
     public ProfileDTO registerProfile(ProfileDTO profileDTO) {
         ProfileEntity newProfile = toEntity(profileDTO);
         newProfile.setActivationToken(UUID.randomUUID().toString());
@@ -35,9 +41,9 @@ public class ProfileService {
         newProfile = profileRepository.save(newProfile);
 
 //        Gửi email kích hoạt
-        String activationLink = "\nhttp://localhost:8080/api/v1.0/activate?token=" + newProfile.getActivationToken();
+        String activationLink = activationUrl + "/api/v1.0/activate?token=" + newProfile.getActivationToken();
         String subject = "Kích hoạt trợ lý tài chính của bạn";
-        String body = "Click vào đây để kích hoạt" + activationLink;
+        String body = "Click vào đây để kích hoạt<br>" + activationLink;
         emailService.sendEmail(newProfile.getEmail(), subject, body);
 
         return toDTO(newProfile);
