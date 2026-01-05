@@ -6,6 +6,7 @@ import com.baitaplon.moneymanagement.entities.ExpenseEntity;
 import com.baitaplon.moneymanagement.entities.ProfileEntity;
 import com.baitaplon.moneymanagement.repositories.CategoryRepository;
 import com.baitaplon.moneymanagement.repositories.ExpenseRepository;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -72,6 +73,12 @@ public class ExpenseService {
         List<ExpenseEntity> expenses = expenseRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(
                 profile.getId(), startDate, endDate, keyword, sort
         );
+        return expenses.stream().map(this::toDTO).toList();
+    }
+
+    @Transactional
+    public List<ExpenseDTO> getExpensesForUserOnDate(String profileId ,LocalDate date) {
+        List<ExpenseEntity> expenses = expenseRepository.findByProfileIdAndDate(profileId, date);
         return expenses.stream().map(this::toDTO).toList();
     }
 

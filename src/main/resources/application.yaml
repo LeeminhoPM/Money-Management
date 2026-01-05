@@ -27,3 +27,7 @@ spring:
 server:
   servlet:
     context-path: /api/v1.0
+
+money-management:
+  frontend:
+    url: "http://localhost:5173"
