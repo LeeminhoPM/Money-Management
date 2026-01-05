@@ -1,6 +1,7 @@
 package com.baitaplon.moneymanagement.utils;
 
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,8 @@ import java.util.Date;
 @Slf4j
 public class JWTUtil {
     // Đoạn JWT_SECRET này là bí mật, chỉ có phía server biết
-    private final String JWT_SECRET = "60e223886f5011866efc9a5801758c8f2019af5854e6cf44dc1a61a14b50ae5e63f4cd8ad98cc6b10d6948b6ccef6280725d18178ba0959714162d6965509de9";
+    @Value("${jwt.signerKey}")
+    private String JWT_SECRET;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(JWT_SECRET.getBytes());

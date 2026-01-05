@@ -37,3 +37,6 @@ money-management:
 app:
   activation:
     url: ${MONEY_MANAGER_BACKEND_URL}
+
+jwt:
+  signerKey: ${JWT_KEY}
