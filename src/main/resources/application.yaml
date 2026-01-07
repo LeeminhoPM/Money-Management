@@ -23,8 +23,6 @@ spring:
           starttls:
             enable: true
     protocol: smtp
-  profiles:
-    active: prod
 
 server:
   servlet:
@@ -39,4 +37,4 @@ app:
     url: ${MONEY_MANAGER_BACKEND_URL}
 
 jwt:
-  signerKey: ${JWT_KEY}
+  signerKey: "60e223886f5011866efc9a5801758c8f2019af5854e6cf44dc1a61a14b50ae5e63f4cd8ad98cc6b10d6948b6ccef6280725d18178ba0959714162d6965509de9"

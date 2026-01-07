@@ -1,5 +1,0 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://dpg-d5dnp1n5r7bs73c2e2d0-a.singapore-postgres.render.com:5432/money_mananagement
-    username: money_mananagement_user
-    password: ${DATABASE_PASSWORD}

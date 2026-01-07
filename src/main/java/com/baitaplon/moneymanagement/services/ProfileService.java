@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -29,6 +31,7 @@ public class ProfileService {
     EmailService emailService;
     PasswordEncoder passwordEncoder;
     AuthenticationManager authenticationManager;
+    JWTUtil jwtUtil;
 
     @NonFinal
     @Value("${app.activation.url}")
@@ -126,10 +129,9 @@ public class ProfileService {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authDTO.getEmail(), authDTO.getPassword()));
 //            Sinh token
-            JWTUtil jwtUtil = new JWTUtil();
             return Map.of("token", jwtUtil.generateToken(authDTO.getEmail()), "user", getPublicProfile(authDTO.getEmail()));
         } catch (Exception e) {
-            throw new RuntimeException("Mật khẩu hoặc email sai");
+            throw new RuntimeException("Sai thông tin, vui lòng nhập lại");
         }
     }
 }
