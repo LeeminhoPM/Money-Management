@@ -40,7 +40,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             email = jwtUtil.getUserFromJWT(jwt);
         }
 
-//        Nếu email valid và chưa có user nào authenticad (Chưa có trong SecurityContextHolder)
+//        Nếu email valid và chưa có user nào authenticated (Chưa có trong SecurityContextHolder)
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
             if (jwtUtil.validateToken(jwt)) {
