@@ -55,6 +55,14 @@ public class CategoryService {
         return toDTO(categoryRepository.save(category));
     }
 
+    public void deleteCategory(String id) {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        CategoryEntity category = categoryRepository.findByIdAndProfileId(id, profile.getId()).orElseThrow(
+                () -> new RuntimeException("Danh mục không tìm thấy hoặc không được phép truy cập")
+        );
+        categoryRepository.delete(category);
+    }
+
 //    Helper (Dùng mapstruct cho nhanh)
     private CategoryEntity toEntity(CategoryDTO categoryDTO, ProfileEntity profileEntity) {
         return CategoryEntity.builder()

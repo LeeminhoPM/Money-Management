@@ -31,6 +31,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader( "Authorization" );
         String email = null;
         String jwt =  null;
+        String path = request.getServletPath();
+
+        // Bỏ qua login / register
+        if (path.equals("/api/v1.0/register") || path.equals("/api/v1.0/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
 //        Kiểm tra có token không
 //        Nếu có thì xóa Bearer ở đầu đi

@@ -41,4 +41,10 @@ public class CategoryController {
         CategoryDTO savedCategory = categoryService.updateCategory(id, categoryDTO);
         return ResponseEntity.status(HttpStatus.OK).body(savedCategory);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCategory(@PathVariable String id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Xóa danh mục thành công");
+    }
 }
