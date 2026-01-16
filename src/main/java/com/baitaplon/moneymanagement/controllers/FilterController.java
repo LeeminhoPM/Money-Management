@@ -37,10 +37,10 @@ public class FilterController {
         Sort.Direction direction = "desc".equalsIgnoreCase(filterDTO.getSortOrder()) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(direction, sortField);
 
-        if ("Thu nhập".equals(filterDTO.getType())) {
+        if ("income".equals(filterDTO.getType())) {
             List<IncomeDTO> incomes = incomeService.filterIncomes(startDate, endDate, keyword, sort);
             return ResponseEntity.status(HttpStatus.OK).body(incomes);
-        } else if ("Chi tiêu".equals(filterDTO.getType())) {
+        } else if ("expense".equals(filterDTO.getType())) {
             List<ExpenseDTO> expenses = expenseService.filterExpenses(startDate, endDate, keyword, sort);
             return ResponseEntity.status(HttpStatus.OK).body(expenses);
         }

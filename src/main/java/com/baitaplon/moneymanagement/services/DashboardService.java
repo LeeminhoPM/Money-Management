@@ -40,7 +40,7 @@ public class DashboardService {
                         .date(income.getDate())
                         .createdAt(income.getCreatedAt())
                         .updatedAt(income.getUpdatedAt())
-                        .type("Thu nhập")
+                        .type("income")
                         .build()
                 ), latestExpenses.stream().map(
                         expense -> RecentTransactionDTO.builder()
@@ -52,7 +52,7 @@ public class DashboardService {
                                 .date(expense.getDate())
                                 .createdAt(expense.getCreatedAt())
                                 .updatedAt(expense.getUpdatedAt())
-                                .type("Chi tiêu")
+                                .type("expense")
                                 .build()
                 )
         ).sorted((RecentTransactionDTO a, RecentTransactionDTO b) -> {
