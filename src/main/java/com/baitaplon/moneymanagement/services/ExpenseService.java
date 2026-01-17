@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,6 +35,12 @@ public class ExpenseService {
 
         ExpenseEntity expense = toEntity(expenseDTO, profile, category);
         return toDTO(expenseRepository.save(expense));
+    }
+
+    public List<ExpenseDTO> getAllExpenseForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<ExpenseEntity> expenses = expenseRepository.findByProfileIdOrderByDateDesc(profile.getId());
+        return expenses.stream().map(this::toDTO).toList();
     }
 
     public List<ExpenseDTO> getCurrentMonthExpenseForCurrentUser() {

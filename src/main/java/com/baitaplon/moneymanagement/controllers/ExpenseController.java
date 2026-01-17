@@ -26,7 +26,7 @@ public class ExpenseController {
 
     @GetMapping
     public ResponseEntity<List<ExpenseDTO>> getExpenses() {
-        List<ExpenseDTO> expenses = expenseService.getCurrentMonthExpenseForCurrentUser();
+        List<ExpenseDTO> expenses = expenseService.getAllExpenseForCurrentUser();
         return ResponseEntity.status(HttpStatus.OK).body(expenses);
     }
 

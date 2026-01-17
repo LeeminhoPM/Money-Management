@@ -26,7 +26,7 @@ public class IncomeController {
 
     @GetMapping
     public ResponseEntity<List<IncomeDTO>> getIncomes() {
-        List<IncomeDTO> incomes = incomeService.getCurrentMonthIncomeForCurrentUser();
+        List<IncomeDTO> incomes = incomeService.getAllIncomeForCurrentUser();
         return ResponseEntity.status(HttpStatus.OK).body(incomes);
     }
 

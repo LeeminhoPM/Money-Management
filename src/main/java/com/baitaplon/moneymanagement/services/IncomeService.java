@@ -1,7 +1,9 @@
 package com.baitaplon.moneymanagement.services;
 
+import com.baitaplon.moneymanagement.dto.ExpenseDTO;
 import com.baitaplon.moneymanagement.dto.IncomeDTO;
 import com.baitaplon.moneymanagement.entities.CategoryEntity;
+import com.baitaplon.moneymanagement.entities.ExpenseEntity;
 import com.baitaplon.moneymanagement.entities.IncomeEntity;
 import com.baitaplon.moneymanagement.entities.ProfileEntity;
 import com.baitaplon.moneymanagement.repositories.CategoryRepository;
@@ -33,6 +35,12 @@ public class IncomeService {
 
         IncomeEntity income = toEntity(incomeDTO, profile, category);
         return toDTO(incomeRepository.save(income));
+    }
+
+    public List<IncomeDTO> getAllIncomeForCurrentUser() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<IncomeEntity> incomes = incomeRepository.findByProfileIdOrderByDateDesc(profile.getId());
+        return incomes.stream().map(this::toDTO).toList();
     }
 
     public List<IncomeDTO> getCurrentMonthIncomeForCurrentUser() {

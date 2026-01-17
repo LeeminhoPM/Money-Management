@@ -13,6 +13,7 @@ public class FilterDTO {
     LocalDate startDate;
     LocalDate endDate;
     String keyword;
+    String categoryName;
     String sortField;
     String sortOrder;
 }

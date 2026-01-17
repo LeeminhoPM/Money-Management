@@ -22,4 +22,5 @@ public class RecentTransactionDTO {
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     String type;
+    String categoryName;
 }
