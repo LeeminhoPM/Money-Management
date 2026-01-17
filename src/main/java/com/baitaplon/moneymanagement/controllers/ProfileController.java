@@ -2,6 +2,7 @@ package com.baitaplon.moneymanagement.controllers;
 
 import com.baitaplon.moneymanagement.dto.AuthDTO;
 import com.baitaplon.moneymanagement.dto.ProfileDTO;
+import com.baitaplon.moneymanagement.dto.UpdatedProfileDTO;
 import com.baitaplon.moneymanagement.services.ProfileService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,12 @@ public class ProfileController {
     @GetMapping("/profile")
     public ResponseEntity<ProfileDTO> getProfile() {
         ProfileDTO response = profileService.getPublicProfile(null);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<ProfileDTO> updateProfile(@RequestBody UpdatedProfileDTO updatedProfileDTO) {
+        ProfileDTO response =  profileService.updateProfile(updatedProfileDTO);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

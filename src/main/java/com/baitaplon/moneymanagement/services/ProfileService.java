@@ -2,6 +2,7 @@ package com.baitaplon.moneymanagement.services;
 
 import com.baitaplon.moneymanagement.dto.AuthDTO;
 import com.baitaplon.moneymanagement.dto.ProfileDTO;
+import com.baitaplon.moneymanagement.dto.UpdatedProfileDTO;
 import com.baitaplon.moneymanagement.entities.ProfileEntity;
 import com.baitaplon.moneymanagement.repositories.ProfileRepository;
 import com.baitaplon.moneymanagement.utils.JWTUtil;
@@ -52,7 +53,7 @@ public class ProfileService {
         return toDTO(newProfile);
     }
 
-    public ProfileEntity toEntity(ProfileDTO profileDTO) {
+    private ProfileEntity toEntity(ProfileDTO profileDTO) {
         return ProfileEntity.builder()
                 .id(profileDTO.getId())
                 .fullName(profileDTO.getFullName())
@@ -64,7 +65,7 @@ public class ProfileService {
                 .build();
     }
 
-    public ProfileDTO toDTO(ProfileEntity profileEntity) {
+    private ProfileDTO toDTO(ProfileEntity profileEntity) {
         return ProfileDTO.builder()
                 .id(profileEntity.getId())
                 .fullName(profileEntity.getFullName())
@@ -106,7 +107,7 @@ public class ProfileService {
 
     public ProfileDTO getPublicProfile(String email) {
         ProfileEntity currentUser;
-//        Nếu không có email th truyền vào user đang đăng nhập
+//        Nếu không có email thì truyền vào user đang đăng nhập
 //        Nếu có thì tìm người đó và đưa ra
         if (email == null) {
             currentUser = getCurrentProfile();
@@ -132,6 +133,21 @@ public class ProfileService {
             return Map.of("token", jwtUtil.generateToken(authDTO.getEmail()), "user", getPublicProfile(authDTO.getEmail()));
         } catch (Exception e) {
             throw new RuntimeException("Sai thông tin, vui lòng nhập lại");
+        }
+    }
+
+    public ProfileDTO updateProfile(UpdatedProfileDTO updatedProfileDTO) {
+        try {
+            ProfileEntity profile = getCurrentProfile();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(profile.getEmail(), updatedProfileDTO.getOldPassword()));
+
+            profile.setFullName(updatedProfileDTO.getFullName());
+            profile.setPassword(passwordEncoder.encode(updatedProfileDTO.getNewPassword()));
+            profile.setProfileImageUrl(updatedProfileDTO.getProfileImageUrl());
+
+            return toDTO(profileRepository.save(profile));
+        } catch (Exception e) {
+            throw new RuntimeException("Mật khẩu cũ không đúng, vui lòng nhập lại");
         }
     }
 }
