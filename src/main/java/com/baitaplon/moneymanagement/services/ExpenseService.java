@@ -1,8 +1,10 @@
 package com.baitaplon.moneymanagement.services;
 
 import com.baitaplon.moneymanagement.dto.ExpenseDTO;
+import com.baitaplon.moneymanagement.dto.IncomeDTO;
 import com.baitaplon.moneymanagement.entities.CategoryEntity;
 import com.baitaplon.moneymanagement.entities.ExpenseEntity;
+import com.baitaplon.moneymanagement.entities.IncomeEntity;
 import com.baitaplon.moneymanagement.entities.ProfileEntity;
 import com.baitaplon.moneymanagement.repositories.CategoryRepository;
 import com.baitaplon.moneymanagement.repositories.ExpenseRepository;
@@ -50,6 +52,26 @@ public class ExpenseService {
         LocalDate endDate = now.withDayOfMonth(now.lengthOfMonth());
         List<ExpenseEntity> expenses = expenseRepository.findByProfileIdAndDateBetween(profile.getId(), startDate, endDate);
         return expenses.stream().map(this::toDTO).toList();
+    }
+
+    public ExpenseDTO updateExpense(String expenseId, ExpenseDTO expenseDTO) {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        CategoryEntity category = categoryRepository.findById(expenseDTO.getCategoryId()).orElseThrow(() ->
+                new RuntimeException("Danh mục không tồn tại")
+        );
+        ExpenseEntity expense = expenseRepository.findById(expenseId).orElseThrow(() ->
+                new RuntimeException("Không tìm thấy khoản chi tiêu")
+        );
+        if (!expense.getProfile().getId().equals(profile.getId())) {
+            throw new RuntimeException("Bạn không có quyền cập nhật mục này");
+        }
+
+        expense.setAmount(expenseDTO.getAmount());
+        expense.setDate(expenseDTO.getDate());
+        expense.setName(expenseDTO.getName());
+        expense.setIcon(expenseDTO.getIcon());
+        expense.setCategory(category);
+        return toDTO(expenseRepository.save(expense));
     }
 
     public void deleteExpense(String expenseId) {

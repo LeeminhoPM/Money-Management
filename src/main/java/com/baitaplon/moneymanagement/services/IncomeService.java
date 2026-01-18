@@ -52,6 +52,26 @@ public class IncomeService {
         return expenses.stream().map(this::toDTO).toList();
     }
 
+    public IncomeDTO updateIncome(String incomeId, IncomeDTO incomeDTO) {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        CategoryEntity category = categoryRepository.findById(incomeDTO.getCategoryId()).orElseThrow(() ->
+                new RuntimeException("Danh mục không tồn tại")
+        );
+        IncomeEntity income = incomeRepository.findById(incomeId).orElseThrow(() ->
+                new RuntimeException("Không tìm thấy khoản thu nhập")
+        );
+        if (!income.getProfile().getId().equals(profile.getId())) {
+            throw new RuntimeException("Bạn không có quyền cập nhật mục này");
+        }
+
+        income.setAmount(incomeDTO.getAmount());
+        income.setDate(incomeDTO.getDate());
+        income.setName(incomeDTO.getName());
+        income.setIcon(incomeDTO.getIcon());
+        income.setCategory(category);
+        return toDTO(incomeRepository.save(income));
+    }
+
     public void deleteIncome(String incomeId) {
         ProfileEntity profile = profileService.getCurrentProfile();
         IncomeEntity income = incomeRepository.findById(incomeId).orElseThrow(() ->

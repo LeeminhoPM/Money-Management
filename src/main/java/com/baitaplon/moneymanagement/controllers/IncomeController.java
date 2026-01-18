@@ -30,6 +30,12 @@ public class IncomeController {
         return ResponseEntity.status(HttpStatus.OK).body(incomes);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<IncomeDTO> updateIncome(@RequestBody IncomeDTO incomeDTO, @PathVariable String id) {
+        IncomeDTO response = incomeService.updateIncome(id, incomeDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteIncome(@PathVariable String id) {
         incomeService.deleteIncome(id);

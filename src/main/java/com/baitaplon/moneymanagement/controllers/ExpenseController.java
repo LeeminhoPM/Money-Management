@@ -1,6 +1,7 @@
 package com.baitaplon.moneymanagement.controllers;
 
 import com.baitaplon.moneymanagement.dto.ExpenseDTO;
+import com.baitaplon.moneymanagement.dto.IncomeDTO;
 import com.baitaplon.moneymanagement.services.ExpenseService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,12 @@ public class ExpenseController {
     public ResponseEntity<List<ExpenseDTO>> getExpenses() {
         List<ExpenseDTO> expenses = expenseService.getAllExpenseForCurrentUser();
         return ResponseEntity.status(HttpStatus.OK).body(expenses);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ExpenseDTO> updateIncome(@RequestBody ExpenseDTO expenseDTO, @PathVariable String id) {
+        ExpenseDTO response = expenseService.updateExpense(id, expenseDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{id}")
