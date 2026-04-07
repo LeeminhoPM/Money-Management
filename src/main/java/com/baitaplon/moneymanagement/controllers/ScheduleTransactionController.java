@@ -27,4 +27,10 @@ public class ScheduleTransactionController {
         scheduleTransactionService.updateCronExpression(id, scheduleTransactionDTO);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Cập nhật đặt lịch thành công");
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteScheduleTransaction(@PathVariable String id) {
+        scheduleTransactionService.deleteCronExpression(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

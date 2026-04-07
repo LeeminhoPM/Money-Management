@@ -75,6 +75,22 @@ public class ScheduleTransactionService {
         restartScheduleTasks(repository.save(task));
     }
 
+    public void deleteCronExpression(String taskId) {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        ScheduleTransactionEntity task = repository.findById(taskId).orElseThrow(
+                () -> new RuntimeException("Không tìm thấy task")
+        );
+        if (task.getProfile().getId().equals(profile.getId())) {
+            throw new RuntimeException("Bạn không có quyền xóa mục này");
+        }
+        repository.delete(task);
+
+        ScheduledFuture<?> oldTask = scheduledFutures.get(task.getId());
+        if (oldTask != null) {
+            oldTask.cancel(false);
+        }
+    }
+
     private void restartScheduleTasks(ScheduleTransactionEntity task) {
         ScheduledFuture<?> oldTask = scheduledFutures.get(task.getId());
         if (oldTask != null) {
