@@ -1,11 +1,7 @@
 package com.baitaplon.moneymanagement.services;
 
 import com.baitaplon.moneymanagement.dto.ExpenseDTO;
-import com.baitaplon.moneymanagement.dto.IncomeDTO;
-import com.baitaplon.moneymanagement.entities.CategoryEntity;
-import com.baitaplon.moneymanagement.entities.ExpenseEntity;
-import com.baitaplon.moneymanagement.entities.IncomeEntity;
-import com.baitaplon.moneymanagement.entities.ProfileEntity;
+import com.baitaplon.moneymanagement.entities.*;
 import com.baitaplon.moneymanagement.repositories.CategoryRepository;
 import com.baitaplon.moneymanagement.repositories.ExpenseRepository;
 import jakarta.transaction.Transactional;
@@ -17,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,6 +24,17 @@ public class ExpenseService {
     ExpenseRepository expenseRepository;
 
 //    Service method
+    public void addExpense(ScheduleTransactionEntity scheduleTransactionEntity) {
+        expenseRepository.save(ExpenseEntity.builder()
+                .name(scheduleTransactionEntity.getName())
+                .icon(scheduleTransactionEntity.getIcon())
+                .amount(scheduleTransactionEntity.getAmount())
+                .date(scheduleTransactionEntity.getDate())
+                .category(scheduleTransactionEntity.getCategory())
+                .profile(scheduleTransactionEntity.getProfile())
+                .build());
+    }
+
     public ExpenseDTO addExpense(ExpenseDTO expenseDTO) {
         ProfileEntity profile = profileService.getCurrentProfile();
         CategoryEntity category = categoryRepository.findById(expenseDTO.getCategoryId()).orElseThrow(() ->

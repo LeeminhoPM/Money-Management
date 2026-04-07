@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tbl_categories")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -19,14 +20,20 @@ public class CategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+
     String name;
+
     @Column(updatable = false)
     @CreationTimestamp
     LocalDateTime createdAt;
+
     @UpdateTimestamp
     LocalDateTime updatedAt;
+
     String type;
+
     String icon;
+
 //    Tương tự như lazy loading trong asp.net FetchType.LAZY chỉ tải đối tượng khi gọi đến nó
     @ManyToOne(fetch = FetchType.LAZY)
 //    Tên cột khóa ngoại

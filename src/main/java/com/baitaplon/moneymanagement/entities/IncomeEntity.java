@@ -12,7 +12,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,19 +24,27 @@ public class IncomeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+
     String name;
+
     String icon;
+
     LocalDate date;
+
     BigDecimal amount;
+
     @Column(updatable = false)
     @CreationTimestamp
     LocalDateTime createdAt;
+
     @UpdateTimestamp
     LocalDateTime updatedAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     CategoryEntity category;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)
     ProfileEntity profile;

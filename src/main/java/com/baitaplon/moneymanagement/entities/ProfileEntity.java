@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tbl_profiles")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -19,17 +20,25 @@ public class ProfileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+
     String fullName;
+
     @Column(unique = true)
     String email;
+
     String password;
+
     String profileImageUrl;
+
     @Column(updatable = false)
     @CreationTimestamp
     LocalDateTime createdAt;
+
     @UpdateTimestamp
     LocalDateTime updatedAt;
+
     Boolean isActive;
+
     String activationToken;
 
 //    Thực thi trước khi cho entity vào database

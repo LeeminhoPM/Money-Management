@@ -1,11 +1,11 @@
 package com.baitaplon.moneymanagement.services;
 
-import com.baitaplon.moneymanagement.dto.ExpenseDTO;
 import com.baitaplon.moneymanagement.dto.IncomeDTO;
+import com.baitaplon.moneymanagement.dto.ScheduleTransactionDTO;
 import com.baitaplon.moneymanagement.entities.CategoryEntity;
-import com.baitaplon.moneymanagement.entities.ExpenseEntity;
 import com.baitaplon.moneymanagement.entities.IncomeEntity;
 import com.baitaplon.moneymanagement.entities.ProfileEntity;
+import com.baitaplon.moneymanagement.entities.ScheduleTransactionEntity;
 import com.baitaplon.moneymanagement.repositories.CategoryRepository;
 import com.baitaplon.moneymanagement.repositories.IncomeRepository;
 import lombok.AccessLevel;
@@ -27,6 +27,17 @@ public class IncomeService {
     IncomeRepository incomeRepository;
 
     //    Service method
+    public void addIncome(ScheduleTransactionEntity scheduleTransactionEntity) {
+        incomeRepository.save(IncomeEntity.builder()
+                        .name(scheduleTransactionEntity.getName())
+                        .icon(scheduleTransactionEntity.getIcon())
+                        .amount(scheduleTransactionEntity.getAmount())
+                        .date(scheduleTransactionEntity.getDate())
+                        .category(scheduleTransactionEntity.getCategory())
+                        .profile(scheduleTransactionEntity.getProfile())
+                .build());
+    }
+
     public IncomeDTO addIncome(IncomeDTO incomeDTO) {
         ProfileEntity profile = profileService.getCurrentProfile();
         CategoryEntity category = categoryRepository.findById(incomeDTO.getCategoryId()).orElseThrow(() ->
