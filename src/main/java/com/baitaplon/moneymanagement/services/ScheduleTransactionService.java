@@ -14,6 +14,7 @@ import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
@@ -30,28 +31,24 @@ public class ScheduleTransactionService {
     ThreadPoolTaskScheduler taskScheduler;
     Map<String, ScheduledFuture<?>> scheduledFutures = new ConcurrentHashMap<>();
 
-    public void createCronExpression(ScheduleTransactionDTO scheduleTransactionDTO) {
+    public ScheduleTransactionDTO createCronExpression(ScheduleTransactionDTO scheduleTransactionDTO) {
         ProfileEntity profile = profileService.getCurrentProfile();
         CategoryEntity category = categoryRepository.findById(scheduleTransactionDTO.getCategoryId()).orElseThrow(
                 () -> new RuntimeException("Không tìm thấy danh mục")
         );
 
-        ScheduleTransactionEntity task = repository.save(ScheduleTransactionEntity.builder()
-                .taskName(scheduleTransactionDTO.getTaskName())
-                .cronExpression(scheduleTransactionDTO.getCronExpression())
-                .icon(scheduleTransactionDTO.getIcon())
-                .type(scheduleTransactionDTO.getType())
-                .amount(scheduleTransactionDTO.getAmount())
-                .name(scheduleTransactionDTO.getName())
-                .date(LocalDate.now())
-                .category(category)
-                .profile(profile)
-                .build());
-
+        ScheduleTransactionEntity task = toEntity(scheduleTransactionDTO, category, profile);
         restartScheduleTasks(task);
+        return toDTO(repository.save(task));
     }
 
-    public void updateCronExpression(String taskId, ScheduleTransactionDTO scheduleTransactionDTO) {
+    public List<ScheduleTransactionDTO> getAllScheduleTransactions() {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<ScheduleTransactionEntity> scheduleTransactionEntities = repository.findByProfileId(profile.getId());
+        return scheduleTransactionEntities.stream().map(this::toDTO).toList();
+    }
+
+    public ScheduleTransactionDTO updateCronExpression(String taskId, ScheduleTransactionDTO scheduleTransactionDTO) {
         ScheduleTransactionEntity task = repository.findById(taskId).orElseThrow(
                 () -> new RuntimeException("Không tìm thấy task")
         );
@@ -72,7 +69,8 @@ public class ScheduleTransactionService {
         task.setDate(LocalDate.now());
         task.setCategory(category);
 
-        restartScheduleTasks(repository.save(task));
+        restartScheduleTasks(task);
+        return toDTO(repository.save(task));
     }
 
     public void deleteCronExpression(String taskId) {
@@ -107,5 +105,32 @@ public class ScheduleTransactionService {
                 }, new CronTrigger(task.getCronExpression())
         );
         scheduledFutures.put(task.getId(), newTask);
+    }
+
+    private ScheduleTransactionDTO toDTO(ScheduleTransactionEntity scheduleTransactionEntity) {
+        return ScheduleTransactionDTO.builder()
+                .taskName(scheduleTransactionEntity.getTaskName())
+                .cronExpression(scheduleTransactionEntity.getCronExpression())
+                .icon(scheduleTransactionEntity.getIcon())
+                .amount(scheduleTransactionEntity.getAmount())
+                .name(scheduleTransactionEntity.getName())
+                .type(scheduleTransactionEntity.getType())
+                .categoryId(scheduleTransactionEntity.getCategory().getId())
+                .userId(scheduleTransactionEntity.getProfile().getId())
+                .build();
+    }
+
+    private ScheduleTransactionEntity toEntity(ScheduleTransactionDTO scheduleTransactionDTO, CategoryEntity category, ProfileEntity profile) {
+        return ScheduleTransactionEntity.builder()
+                .taskName(scheduleTransactionDTO.getTaskName())
+                .cronExpression(scheduleTransactionDTO.getCronExpression())
+                .icon(scheduleTransactionDTO.getIcon())
+                .type(scheduleTransactionDTO.getType())
+                .amount(scheduleTransactionDTO.getAmount())
+                .name(scheduleTransactionDTO.getName())
+                .date(LocalDate.now())
+                .category(category)
+                .profile(profile)
+                .build();
     }
 }

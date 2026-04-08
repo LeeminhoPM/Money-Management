@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/schedules")
 @RequiredArgsConstructor
@@ -17,15 +19,21 @@ public class ScheduleTransactionController {
     ScheduleTransactionService scheduleTransactionService;
 
     @PostMapping
-    public ResponseEntity<String> addScheduleTransaction(@RequestBody ScheduleTransactionDTO scheduleTransactionDTO) {
-        scheduleTransactionService.createCronExpression(scheduleTransactionDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Đặt lịch thành công");
+    public ResponseEntity<ScheduleTransactionDTO> addScheduleTransaction(@RequestBody ScheduleTransactionDTO scheduleTransactionDTO) {
+        ScheduleTransactionDTO response = scheduleTransactionService.createCronExpression(scheduleTransactionDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ScheduleTransactionDTO>> getAllScheduleTransactions() {
+        List<ScheduleTransactionDTO> response = scheduleTransactionService.getAllScheduleTransactions();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateScheduleTransaction(@RequestBody ScheduleTransactionDTO scheduleTransactionDTO, @PathVariable String id) {
-        scheduleTransactionService.updateCronExpression(id, scheduleTransactionDTO);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Cập nhật đặt lịch thành công");
+    public ResponseEntity<ScheduleTransactionDTO> updateScheduleTransaction(@RequestBody ScheduleTransactionDTO scheduleTransactionDTO, @PathVariable String id) {
+        ScheduleTransactionDTO response = scheduleTransactionService.updateCronExpression(id, scheduleTransactionDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{id}")
