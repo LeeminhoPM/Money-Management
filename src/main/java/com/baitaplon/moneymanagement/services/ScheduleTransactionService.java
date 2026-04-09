@@ -37,9 +37,9 @@ public class ScheduleTransactionService {
                 () -> new RuntimeException("Không tìm thấy danh mục")
         );
 
-        ScheduleTransactionEntity task = toEntity(scheduleTransactionDTO, category, profile);
+        ScheduleTransactionEntity task = repository.save(toEntity(scheduleTransactionDTO, category, profile));
         restartScheduleTasks(task);
-        return toDTO(repository.save(task));
+        return toDTO(task);
     }
 
     public List<ScheduleTransactionDTO> getAllScheduleTransactions() {
@@ -56,7 +56,7 @@ public class ScheduleTransactionService {
         CategoryEntity category = categoryRepository.findById(scheduleTransactionDTO.getCategoryId()).orElseThrow(
                 () -> new RuntimeException("Không tìm thấy danh mục")
         );
-        if (task.getProfile().getId().equals(profile.getId())) {
+        if (!task.getProfile().getId().equals(profile.getId())) {
             throw new RuntimeException("Bạn không có quyền cập nhật mục này");
         }
 
@@ -69,8 +69,10 @@ public class ScheduleTransactionService {
         task.setDate(LocalDate.now());
         task.setCategory(category);
 
-        restartScheduleTasks(task);
-        return toDTO(repository.save(task));
+        ScheduleTransactionEntity updatedTask = repository.save(task);
+
+        restartScheduleTasks(updatedTask);
+        return toDTO(updatedTask);
     }
 
     public void deleteCronExpression(String taskId) {
@@ -78,7 +80,7 @@ public class ScheduleTransactionService {
         ScheduleTransactionEntity task = repository.findById(taskId).orElseThrow(
                 () -> new RuntimeException("Không tìm thấy task")
         );
-        if (task.getProfile().getId().equals(profile.getId())) {
+        if (!task.getProfile().getId().equals(profile.getId())) {
             throw new RuntimeException("Bạn không có quyền xóa mục này");
         }
         repository.delete(task);
