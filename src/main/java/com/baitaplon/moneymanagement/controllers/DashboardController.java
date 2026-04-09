@@ -7,9 +7,13 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,6 +26,12 @@ public class DashboardController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getDashboardData() {
         Map<String, Object> data = dashboardService.getDashboardData();
+        return ResponseEntity.status(HttpStatus.OK).body(data);
+    }
+
+    @GetMapping("/chart/{type}")
+    public ResponseEntity<List<Map<String, Object>>> getChartData(@PathVariable String type) {
+        List<Map<String, Object>> data = dashboardService.getChartDataByType(type);
         return ResponseEntity.status(HttpStatus.OK).body(data);
     }
 }

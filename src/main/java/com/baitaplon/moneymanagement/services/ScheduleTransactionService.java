@@ -111,6 +111,7 @@ public class ScheduleTransactionService {
 
     private ScheduleTransactionDTO toDTO(ScheduleTransactionEntity scheduleTransactionEntity) {
         return ScheduleTransactionDTO.builder()
+                .id(scheduleTransactionEntity.getId())
                 .taskName(scheduleTransactionEntity.getTaskName())
                 .cronExpression(scheduleTransactionEntity.getCronExpression())
                 .icon(scheduleTransactionEntity.getIcon())
@@ -118,6 +119,7 @@ public class ScheduleTransactionService {
                 .name(scheduleTransactionEntity.getName())
                 .type(scheduleTransactionEntity.getType())
                 .categoryId(scheduleTransactionEntity.getCategory().getId())
+                .categoryName(scheduleTransactionEntity.getCategory().getName())
                 .userId(scheduleTransactionEntity.getProfile().getId())
                 .build();
     }

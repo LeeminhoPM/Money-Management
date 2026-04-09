@@ -1,18 +1,18 @@
 package com.baitaplon.moneymanagement.services;
 
+import com.baitaplon.moneymanagement.dto.CategoryDTO;
 import com.baitaplon.moneymanagement.dto.ExpenseDTO;
 import com.baitaplon.moneymanagement.dto.IncomeDTO;
 import com.baitaplon.moneymanagement.dto.RecentTransactionDTO;
+import com.baitaplon.moneymanagement.entities.CategoryEntity;
 import com.baitaplon.moneymanagement.entities.ProfileEntity;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DashboardService {
+    CategoryService categoryService;
     IncomeService incomeService;
     ExpenseService expenseService;
     ProfileService profileService;
@@ -51,6 +52,20 @@ public class DashboardService {
         List<ExpenseDTO> expenses = expenseService.getAllExpenseForCurrentUser();
 
         return mergeTransactions(incomes, expenses, "date", "desc");
+    }
+
+    public List<Map<String, Object>> getChartDataByType(String type) {
+        ArrayList<Map<String, Object>> data = new ArrayList<>();
+        List<CategoryDTO> categories = categoryService.getCategoriesByTypeForCurrentProfile(type);
+
+        for (CategoryDTO category : categories) {
+            if (type.equals("income")) {
+                data.add(Map.of("name", category.getName(), "amount", incomeService.getTotalIncomesForCurrentUserByCategoryId(category.getId())));
+            } else if (type.equals("expense")) {
+                data.add(Map.of("name", category.getName(), "amount", expenseService.getTotalExpensesForCurrentUserByCategoryId(category.getId())));
+            }
+        }
+        return data;
     }
 
 //    Hàm chức năng

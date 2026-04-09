@@ -1,7 +1,6 @@
 package com.baitaplon.moneymanagement.services;
 
 import com.baitaplon.moneymanagement.dto.IncomeDTO;
-import com.baitaplon.moneymanagement.dto.ScheduleTransactionDTO;
 import com.baitaplon.moneymanagement.entities.CategoryEntity;
 import com.baitaplon.moneymanagement.entities.IncomeEntity;
 import com.baitaplon.moneymanagement.entities.ProfileEntity;
@@ -103,6 +102,15 @@ public class IncomeService {
     public BigDecimal getTotalIncomesForCurrentUser() {
         ProfileEntity profile = profileService.getCurrentProfile();
         BigDecimal totalIncomes = incomeRepository.findTotalIncomeByProfileId(profile.getId());
+        return totalIncomes != null ? totalIncomes : BigDecimal.ZERO;
+    }
+
+    public BigDecimal getTotalIncomesForCurrentUserByCategoryId(String categoryId) {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        CategoryEntity category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new RuntimeException("Không tìm thấy danh mục")
+        );
+        BigDecimal totalIncomes = incomeRepository.findTotalIncomeByProfileIdAndCategoryId(profile.getId(), category.getId());
         return totalIncomes != null ? totalIncomes : BigDecimal.ZERO;
     }
 

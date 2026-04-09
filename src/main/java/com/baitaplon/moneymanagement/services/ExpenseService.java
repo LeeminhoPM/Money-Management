@@ -103,6 +103,15 @@ public class ExpenseService {
         return totalExpenses != null ? totalExpenses : BigDecimal.ZERO;
     }
 
+    public BigDecimal getTotalExpensesForCurrentUserByCategoryId(String categoryId) {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        CategoryEntity category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new RuntimeException("Không tìm thấy danh mục")
+        );
+        BigDecimal totalExpenses = expenseRepository.findTotalExpenseByProfileIdAndCategoryId(profile.getId(), category.getId());
+        return totalExpenses != null ? totalExpenses : BigDecimal.ZERO;
+    }
+
     public List<ExpenseDTO> filterExpenses(LocalDate startDate, LocalDate endDate, String keyword, Sort sort) {
         ProfileEntity profile = profileService.getCurrentProfile();
         List<ExpenseEntity> expenses = expenseRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(

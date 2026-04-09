@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ScheduleTransactionDTO {
+    String id;
+
     String taskName;
 
     String cronExpression;
@@ -25,6 +27,8 @@ public class ScheduleTransactionDTO {
     String type;
 
     String categoryId;
+
+    String categoryName;
 
     String userId;
 }
